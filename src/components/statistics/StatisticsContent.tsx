@@ -34,17 +34,17 @@ export const StatisticsContent = () => {
         const downtime = totalPings - upPings;
 
         return {
-          id: website.id,
-          url: website.url,
+          id: website.id.toString(), // Convert id to string for chart compatibility
+          url: website.url || "",
           availability: Math.round(availability * 100) / 100,
           downtime,
           history: website.websitePingHistory
         };
       });
     },
-    gcTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 5 * 60 * 1000,
     meta: {
-      staleTime: 60000, // 1 minute
+      staleTime: 60000,
     }
   });
 
