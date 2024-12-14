@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Textarea } from "@/components/ui/textarea";
 
 interface WebsiteEditDialogProps {
   isOpen: boolean;
@@ -65,11 +66,12 @@ export const WebsiteEditDialog = ({ isOpen, onClose, website }: WebsiteEditDialo
             <label htmlFor="description" className="text-sm font-medium">
               Description
             </label>
-            <Input
+            <Textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Description du site (optionnel)"
+              className="min-h-[100px]"
             />
           </div>
           <div className="flex justify-end gap-2">

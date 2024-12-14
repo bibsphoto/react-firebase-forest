@@ -21,6 +21,7 @@ export const WebsiteGrid = ({ websites }: WebsiteGridProps) => {
             status={website.status}
             lastChecked={new Date(website.last_checked)}
             responseTime={website.responseTime}
+            description={website.description}
           />
         ))}
       </div>
