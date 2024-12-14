@@ -71,10 +71,16 @@ const PingHistory = () => {
 
   const handleClearHistory = async () => {
     try {
-      const { error } = await supabase
-        .from("websitePingHistory")
-        .delete()
-        .order("checked_at", { ascending: false });
+      let query = supabase.from("websitePingHistory").delete();
+      
+      if (selectedWebsite !== "all") {
+        query = query.eq("website_id", selectedWebsite);
+      } else {
+        // When "all" is selected, we need to delete with a condition that's always true
+        query = query.gte("id", 0);
+      }
+
+      const { error } = await query;
 
       if (error) throw error;
 
