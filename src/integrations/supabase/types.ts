@@ -30,6 +30,38 @@ export type Database = {
         }
         Relationships: []
       }
+      website_positions: {
+        Row: {
+          created_at: string
+          id: number
+          position: number
+          user_id: string
+          website_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          position: number
+          user_id: string
+          website_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          position?: number
+          user_id?: string
+          website_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "website_positions_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "websitesSupervision"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       websitePingHistory: {
         Row: {
           checked_at: string | null
