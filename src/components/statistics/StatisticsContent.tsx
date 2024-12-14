@@ -42,9 +42,9 @@ export const StatisticsContent = () => {
         };
       });
     },
-    gcTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 5 * 60 * 1000,
     meta: {
-      staleTime: 60000, // 1 minute
+      staleTime: 60000,
     }
   });
 
@@ -56,7 +56,7 @@ export const StatisticsContent = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <Link to="/">
-          <Button variant="outline">
+          <Button variant="gradient">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
