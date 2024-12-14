@@ -10,6 +10,7 @@ export interface WebsitesSchema {
         url: string | null;
         user_id: string | null;
         icon_url: string | null;
+        responseTime: number | null;
       };
       Insert: {
         created_at?: string;
@@ -20,6 +21,7 @@ export interface WebsitesSchema {
         url?: string | null;
         user_id?: string | null;
         icon_url?: string | null;
+        responseTime?: number | null;
       };
       Update: {
         created_at?: string;
@@ -30,6 +32,7 @@ export interface WebsitesSchema {
         url?: string | null;
         user_id?: string | null;
         icon_url?: string | null;
+        responseTime?: number | null;
       };
       Relationships: [];
     };
@@ -61,38 +64,6 @@ export interface WebsitesSchema {
       Relationships: [
         {
           foreignKeyName: "websitePingHistory_website_id_fkey";
-          columns: ["website_id"];
-          isOneToOne: false;
-          referencedRelation: "websitesSupervision";
-          referencedColumns: ["id"];
-        }
-      ];
-    };
-    website_positions: {
-      Row: {
-        created_at: string;
-        id: number;
-        position: number;
-        user_id: string;
-        website_id: number;
-      };
-      Insert: {
-        created_at?: string;
-        id?: number;
-        position: number;
-        user_id: string;
-        website_id: number;
-      };
-      Update: {
-        created_at?: string;
-        id?: number;
-        position?: number;
-        user_id?: string;
-        website_id?: number;
-      };
-      Relationships: [
-        {
-          foreignKeyName: "website_positions_website_id_fkey";
           columns: ["website_id"];
           isOneToOne: false;
           referencedRelation: "websitesSupervision";
