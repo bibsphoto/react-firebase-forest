@@ -17,11 +17,12 @@ export const WebsiteGrid = ({ websites }: WebsiteGridProps) => {
           <WebsiteCard
             key={website.id}
             id={website.id.toString()}
-            url={website.url}
-            status={website.status}
-            lastChecked={new Date(website.last_checked)}
+            url={website.url || ""}
+            status={website.status as "up" | "down"}
+            lastChecked={new Date(website.last_checked || Date.now())}
             responseTime={website.responseTime}
-            description={website.description}
+            description={website.description || ""}
+            icon_url={website.icon_url}
           />
         ))}
       </div>
