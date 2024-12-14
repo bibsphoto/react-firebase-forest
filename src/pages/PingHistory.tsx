@@ -102,7 +102,7 @@ const PingHistory = () => {
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
               <Link to="/">
-                <Button variant="outline">
+                <Button variant="gradient">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Retour
                 </Button>
