@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { WebsiteList } from "./WebsiteList";
-import { Plus, History, BarChart, ArrowUp, RefreshCw } from "lucide-react";
+import { Plus, History, BarChart, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import { DashboardStats } from "./DashboardStats";
 
 export const Dashboard = () => {
   const queryClient = useQueryClient();
 
-  // Set up real-time subscription with improved error handling and debugging
   useEffect(() => {
     console.log('Setting up real-time subscription for dashboard stats...');
     
@@ -156,49 +156,21 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative">
-          <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-green-800">Sites en ligne</h3>
-              <ArrowUp className="h-5 w-5 text-green-600" />
-            </div>
-            <p className="text-3xl font-bold text-green-600 mt-2">
-              {stats?.availabilityPercentage || 0}%
-            </p>
-          </div>
-          
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-blue-800">Temps moyen</h3>
-              <History className="h-5 w-5 text-blue-600" />
-            </div>
-            <p className="text-3xl font-bold text-blue-600 mt-2">
-              {stats?.averageResponseTime || 0}ms
-            </p>
-          </div>
-          
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-purple-800">Sites surveillés</h3>
-              <BarChart className="h-5 w-5 text-purple-600" />
-            </div>
-            <p className="text-3xl font-bold text-purple-600 mt-2">
-              {stats?.totalSites || 0}
-            </p>
-          </div>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleManualPing}
-            className="absolute bottom-2 right-2 w-8 h-8 opacity-50 hover:opacity-100 transition-opacity"
-            title="Vérifier manuellement tous les sites"
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
+        <DashboardStats stats={stats} />
       </div>
+
       <WebsiteList />
+
+      <div className="flex justify-center mt-8">
+        <Button
+          variant="outline"
+          onClick={handleManualPing}
+          className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Vérifier manuellement tous les sites
+        </Button>
+      </div>
     </div>
   );
 };
