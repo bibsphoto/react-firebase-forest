@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export const Dashboard = () => {
   const queryClient = useQueryClient();
 
-  // Set up real-time subscription with improved error handling
+  // Set up real-time subscription with improved error handling and debugging
   useEffect(() => {
     console.log('Setting up real-time subscription for dashboard stats...');
     
@@ -25,12 +25,16 @@ export const Dashboard = () => {
         },
         (payload) => {
           console.log('Received real-time update:', payload);
-          // Invalidate and refetch when data changes
+          // Force immediate refetch when data changes
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+          queryClient.refetchQueries({ queryKey: ['dashboard-stats'] });
         }
       )
       .subscribe((status) => {
         console.log('Subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to real-time updates');
+        }
       });
 
     return () => {
@@ -46,7 +50,10 @@ export const Dashboard = () => {
       
       const { data: websites, error } = await supabase
         .from('websitesSupervision')
-        .select('status, websitePingHistory!inner(response_time)')
+        .select(`
+          status,
+          websitePingHistory!inner(response_time)
+        `)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -54,7 +61,7 @@ export const Dashboard = () => {
         throw error;
       }
 
-      console.log('Fetched websites:', websites);
+      console.log('Fetched websites for stats:', websites);
 
       const totalSites = websites?.length || 0;
       const onlineSites = websites?.filter(site => site.status === 'up').length || 0;
@@ -73,9 +80,9 @@ export const Dashboard = () => {
         averageResponseTime: Math.round(averageResponseTime)
       };
     },
-    gcTime: 0,
-    staleTime: 0,
-    refetchInterval: 10000,
+    gcTime: 0, // Disable garbage collection
+    staleTime: 0, // Always consider data stale
+    refetchInterval: 10000, // Refetch every 10 seconds
   });
 
   if (isError) {
@@ -96,10 +103,12 @@ export const Dashboard = () => {
       }
       
       toast.success('Vérification manuelle des sites en cours...');
-      // Refetch data after a short delay to allow the check to complete
+      // Force immediate refetch after manual ping
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
         queryClient.invalidateQueries({ queryKey: ['websites'] });
+        queryClient.refetchQueries({ queryKey: ['dashboard-stats'] });
+        queryClient.refetchQueries({ queryKey: ['websites'] });
       }, 2000);
     } catch (error) {
       console.error('Error triggering manual ping:', error);
