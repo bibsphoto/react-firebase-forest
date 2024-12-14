@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
   return (
     <nav className="border-b bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,8 +25,13 @@ export const Navbar = () => {
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" className="text-primary hover:text-primary-hover">Se connecter</Button>
-            <Button className="bg-accent hover:bg-accent-hover text-white">S'inscrire</Button>
+            <Button 
+              variant="ghost" 
+              onClick={handleLogout}
+              className="text-primary hover:text-primary-hover"
+            >
+              Se déconnecter
+            </Button>
           </div>
         </div>
       </div>
