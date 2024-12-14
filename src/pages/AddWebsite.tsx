@@ -103,8 +103,7 @@ const AddWebsite = () => {
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description du site"
-              required
+              placeholder="Description du site (optionnel)"
               disabled={isSubmitting}
             />
           </div>
