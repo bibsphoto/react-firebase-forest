@@ -34,11 +34,13 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
 
   const handleDelete = async () => {
     try {
+      const numericId = parseInt(id);
+      
       // First delete ping history
       const { error: historyError } = await supabase
         .from('websitePingHistory')
         .delete()
-        .eq('website_id', id);
+        .eq('website_id', numericId);
 
       if (historyError) {
         console.error('Error deleting ping history:', historyError);
@@ -49,7 +51,7 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
       const { error: positionsError } = await supabase
         .from('website_positions')
         .delete()
-        .eq('website_id', id);
+        .eq('website_id', numericId);
 
       if (positionsError) {
         console.error('Error deleting positions:', positionsError);
@@ -60,7 +62,7 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
       const { error: websiteError } = await supabase
         .from('websitesSupervision')
         .delete()
-        .eq('id', id);
+        .eq('id', numericId);
 
       if (websiteError) {
         console.error('Error deleting website:', websiteError);
