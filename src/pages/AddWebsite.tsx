@@ -6,10 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 const AddWebsite = () => {
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -24,6 +26,7 @@ const AddWebsite = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!validateUrl(url)) {
       toast({
@@ -31,16 +34,37 @@ const AddWebsite = () => {
         title: "URL invalide",
         description: "Veuillez entrer une URL valide",
       });
+      setIsSubmitting(false);
       return;
     }
 
-    // TODO: Intégrer avec Supabase pour sauvegarder les données
-    toast({
-      title: "Site ajouté avec succès",
-      description: "Le site a été ajouté à la liste de supervision",
-    });
-    
-    navigate("/");
+    try {
+      const { error } = await supabase.from('websites').insert([
+        {
+          url,
+          description,
+          status: 'up',
+          last_checked: new Date().toISOString(),
+        }
+      ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Site ajouté avec succès",
+        description: "Le site a été ajouté à la liste de supervision",
+      });
+      
+      navigate("/");
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'ajout du site",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -67,6 +91,7 @@ const AddWebsite = () => {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com"
               required
+              disabled={isSubmitting}
             />
           </div>
           
@@ -80,11 +105,12 @@ const AddWebsite = () => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Description du site"
               required
+              disabled={isSubmitting}
             />
           </div>
           
-          <Button type="submit" className="w-full">
-            Ajouter le site
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Ajout en cours..." : "Ajouter le site"}
           </Button>
         </form>
       </div>
