@@ -119,6 +119,7 @@ const AddWebsite = () => {
             <h2 className="text-lg font-semibold text-gray-700">Prévisualisation</h2>
             <div className="border rounded-lg p-4 bg-gray-50">
               <WebsiteCard
+                id="preview"
                 url={url || "votre-site.com"}
                 status="up"
                 lastChecked={new Date()}
