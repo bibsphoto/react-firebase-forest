@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      websitePingHistory: {
+        Row: {
+          checked_at: string | null
+          created_at: string | null
+          id: number
+          response_time: number | null
+          status: string
+          website_id: number | null
+        }
+        Insert: {
+          checked_at?: string | null
+          created_at?: string | null
+          id?: never
+          response_time?: number | null
+          status: string
+          website_id?: number | null
+        }
+        Update: {
+          checked_at?: string | null
+          created_at?: string | null
+          id?: never
+          response_time?: number | null
+          status?: string
+          website_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "websitePingHistory_website_id_fkey"
+            columns: ["website_id"]
+            isOneToOne: false
+            referencedRelation: "websitesSupervision"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       websitesSupervision: {
         Row: {
           created_at: string

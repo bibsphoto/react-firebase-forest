@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import AddWebsite from "./pages/AddWebsite";
+import PingHistory from "./pages/PingHistory";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/add-website" element={<AddWebsite />} />
+          <Route path="/history" element={<PingHistory />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
