@@ -9,7 +9,9 @@ interface WebsiteCardActionsProps {
 }
 
 export const WebsiteCardActions = ({ url, id }: WebsiteCardActionsProps) => {
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click event
+    
     try {
       const numericId = parseInt(id);
       
@@ -67,10 +69,7 @@ export const WebsiteCardActions = ({ url, id }: WebsiteCardActionsProps) => {
         variant="ghost"
         size="icon"
         className="h-8 w-8 text-gray-400 hover:text-red-500 transition-colors"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDelete();
-        }}
+        onClick={handleDelete}
       >
         <Trash2 className="h-4 w-4" />
       </Button>
