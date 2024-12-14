@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from './fetchWithTimeout';
+import { fetchWithTimeout } from './fetchWithTimeout.ts';
 
 interface CheckResult {
   status: 'up' | 'down';
