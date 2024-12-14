@@ -9,51 +9,24 @@ interface CheckResult {
 export async function checkWebsite(url: string): Promise<CheckResult> {
   const startTime = Date.now();
   
-  // Normalize URL and handle www subdomain
+  // Normalize URL
   let normalizedUrl = url.toLowerCase();
-  
-  // Remove trailing slashes
   normalizedUrl = normalizedUrl.replace(/\/+$/, '');
   
-  // Handle www and protocol
   if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
-    // Try HTTPS with www first if not present
-    const urlWithoutProtocol = normalizedUrl.replace(/^(https?:\/\/)?(www\.)?/, '');
-    const variants = [
-      `https://www.${urlWithoutProtocol}`,
-      `https://${urlWithoutProtocol}`,
-      `http://www.${urlWithoutProtocol}`,
-      `http://${urlWithoutProtocol}`
-    ];
-
-    for (const variant of variants) {
-      try {
-        console.log(`Trying variant: ${variant}`);
-        const response = await fetchWithTimeout(variant);
-        if (response.ok || (response.status >= 300 && response.status < 400)) {
-          normalizedUrl = variant;
-          console.log(`Success with variant: ${variant}`);
-          break;
-        }
-      } catch (error) {
-        console.log(`Failed with variant: ${variant}`, error);
-        continue;
-      }
-    }
-
-    // If no variant worked, use HTTPS with www as default
-    if (!normalizedUrl.startsWith('http')) {
-      normalizedUrl = `https://www.${urlWithoutProtocol}`;
-    }
+    normalizedUrl = `https://${normalizedUrl}`;
   }
 
   try {
-    console.log(`Final check for website: ${normalizedUrl}`);
+    console.log(`Checking website: ${normalizedUrl}`);
     const response = await fetchWithTimeout(normalizedUrl);
     const responseTime = Date.now() - startTime;
 
-    // Consider redirects (3xx) and successful responses as UP
-    if (response.ok || (response.status >= 300 && response.status < 400)) {
+    console.log(`Response status for ${normalizedUrl}:`, response.status);
+    console.log(`Response ok for ${normalizedUrl}:`, response.ok);
+
+    // Consider any 2xx or 3xx status as UP
+    if (response.status >= 200 && response.status < 400) {
       console.log(`Website ${normalizedUrl} is UP (${response.status})`);
       return { status: 'up', responseTime };
     } else {
@@ -66,6 +39,24 @@ export async function checkWebsite(url: string): Promise<CheckResult> {
     }
   } catch (error) {
     console.error(`Error checking ${normalizedUrl}:`, error);
+    
+    // Si l'erreur est due à HTTPS, essayons avec HTTP
+    if (!normalizedUrl.startsWith('http://')) {
+      try {
+        const httpUrl = normalizedUrl.replace('https://', 'http://');
+        console.log(`Retrying with HTTP: ${httpUrl}`);
+        const response = await fetchWithTimeout(httpUrl);
+        const responseTime = Date.now() - startTime;
+
+        if (response.status >= 200 && response.status < 400) {
+          console.log(`Website ${httpUrl} is UP (${response.status})`);
+          return { status: 'up', responseTime };
+        }
+      } catch (httpError) {
+        console.error(`HTTP fallback also failed for ${normalizedUrl}:`, httpError);
+      }
+    }
+
     return { 
       status: 'down', 
       responseTime: Date.now() - startTime,
