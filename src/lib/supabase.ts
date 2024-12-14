@@ -5,6 +5,11 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
+export type WebsitePingHistory = {
+  response_time: number;
+  checked_at: string;
+};
+
 export type Website = {
   id: string;
   url: string;
@@ -13,8 +18,5 @@ export type Website = {
   last_checked: Date;
   created_at: Date;
   responseTime?: number;
-  websitePingHistory?: Array<{
-    response_time: number;
-    checked_at: string;
-  }>;
+  websitePingHistory?: WebsitePingHistory[];
 };
