@@ -84,7 +84,7 @@ const Login = () => {
                   loading_button_label: "Inscription en cours...",
                   social_provider_text: "Continuer avec {{provider}}",
                   link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                  confirmation_text: "Confirmez le mot de passe",
+                  confirmation_text: "Confirmez votre mot de passe",
                 },
                 forgotten_password: {
                   email_label: "Adresse e-mail",
