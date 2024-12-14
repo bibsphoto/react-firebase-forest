@@ -1,10 +1,10 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -24,9 +24,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { CheckCircle, XCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const PingHistory = () => {
   const [selectedWebsite, setSelectedWebsite] = useState<string>("all");
+  const queryClient = useQueryClient();
 
   const { data: websites } = useQuery({
     queryKey: ["websites"],
@@ -67,6 +69,23 @@ const PingHistory = () => {
     },
   });
 
+  const handleClearHistory = async () => {
+    try {
+      const { error } = await supabase
+        .from("websitePingHistory")
+        .delete()
+        .order("checked_at", { ascending: false });
+
+      if (error) throw error;
+
+      queryClient.invalidateQueries({ queryKey: ["history"] });
+      toast.success("L'historique a été effacé avec succès");
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'historique:", error);
+      toast.error("Une erreur est survenue lors de la suppression de l'historique");
+    }
+  };
+
   if (isLoading) return <div>Chargement...</div>;
 
   return (
@@ -74,14 +93,24 @@ const PingHistory = () => {
       <Navbar />
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center gap-4 mb-8">
-            <Link to="/">
-              <Button variant="outline">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Retour
-              </Button>
-            </Link>
-            <h1 className="text-3xl font-bold">Historique des vérifications</h1>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="outline">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Retour
+                </Button>
+              </Link>
+              <h1 className="text-3xl font-bold">Historique des vérifications</h1>
+            </div>
+            <Button 
+              variant="destructive" 
+              onClick={handleClearHistory}
+              className="gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Effacer l'historique
+            </Button>
           </div>
 
           <div className="mb-6">
