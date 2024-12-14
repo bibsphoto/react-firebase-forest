@@ -8,7 +8,7 @@ export const WebsiteList = () => {
     queryKey: ['websites'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('websites')
+        .from('websitesSupervision')
         .select('*')
         .order('created_at', { ascending: false });
 
