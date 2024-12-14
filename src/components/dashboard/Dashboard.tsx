@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { WebsiteList } from "./WebsiteList";
-import { Plus, History, BarChart, ArrowUp } from "lucide-react";
+import { Plus, History, BarChart, ArrowUp, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export const Dashboard = () => {
   const queryClient = useQueryClient();
@@ -66,10 +67,35 @@ export const Dashboard = () => {
         averageResponseTime: Math.round(averageResponseTime)
       };
     },
-    gcTime: 0, // Disable garbage collection
-    staleTime: 0, // Always consider data stale
-    refetchInterval: 10000, // Refetch every 10 seconds
+    gcTime: 0,
+    staleTime: 0,
+    refetchInterval: 10000,
   });
+
+  const handleManualPing = async () => {
+    try {
+      const response = await fetch('https://ddbudopwefbhjrdqssma.supabase.co/functions/v1/check-websites', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to trigger manual ping');
+      }
+      
+      toast.success('Vérification manuelle des sites en cours...');
+      // Refetch data after a short delay to allow the check to complete
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        queryClient.invalidateQueries({ queryKey: ['websites'] });
+      }, 2000);
+    } catch (error) {
+      console.error('Error triggering manual ping:', error);
+      toast.error('Erreur lors de la vérification manuelle');
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -111,7 +137,7 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 relative">
           <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl shadow-lg">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-green-800">Sites en ligne</h3>
@@ -141,6 +167,16 @@ export const Dashboard = () => {
               {stats?.totalSites || 0}
             </p>
           </div>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleManualPing}
+            className="absolute bottom-2 right-2 w-8 h-8 opacity-50 hover:opacity-100 transition-opacity"
+            title="Vérifier manuellement tous les sites"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
       </div>
       <WebsiteList />
