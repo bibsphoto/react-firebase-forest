@@ -80,11 +80,11 @@ const Login = () => {
                 sign_up: {
                   email_label: "Adresse e-mail",
                   password_label: "Mot de passe",
-                  password_label_confirm: "Confirmez le mot de passe",
                   button_label: "S'inscrire",
                   loading_button_label: "Inscription en cours...",
                   social_provider_text: "Continuer avec {{provider}}",
                   link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                  confirmation_text: "Confirmez le mot de passe",
                 },
                 forgotten_password: {
                   email_label: "Adresse e-mail",
