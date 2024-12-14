@@ -2,18 +2,52 @@ import { Button } from "@/components/ui/button";
 import { WebsiteList } from "./WebsiteList";
 import { Plus, History, BarChart, ArrowUp } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 export const Dashboard = () => {
+  const queryClient = useQueryClient();
+
+  // Set up real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('website-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'websitesSupervision'
+        },
+        () => {
+          // Invalidate and refetch when data changes
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
+      console.log('Fetching dashboard stats...');
+      
       const { data: websites, error } = await supabase
         .from('websitesSupervision')
-        .select('status');
+        .select('status, websitePingHistory!inner(response_time)')
+        .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching stats:', error);
+        throw error;
+      }
+
+      console.log('Fetched websites:', websites);
 
       const totalSites = websites?.length || 0;
       const onlineSites = websites?.filter(site => site.status === 'up').length || 0;
@@ -21,26 +55,20 @@ export const Dashboard = () => {
         ? Math.round((onlineSites / totalSites) * 100) 
         : 0;
 
-      const { data: pingHistory } = await supabase
-        .from('websitePingHistory')
-        .select('response_time')
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      const averageResponseTime = pingHistory?.length 
-        ? Math.round(pingHistory.reduce((acc, curr) => acc + (curr.response_time || 0), 0) / pingHistory.length)
-        : 0;
+      const averageResponseTime = websites?.reduce((acc, site) => {
+        const latestPing = site.websitePingHistory[0];
+        return acc + (latestPing?.response_time || 0);
+      }, 0) / totalSites || 0;
 
       return {
         totalSites,
         availabilityPercentage,
-        averageResponseTime
+        averageResponseTime: Math.round(averageResponseTime)
       };
     },
-    gcTime: 5 * 60 * 1000,
-    meta: {
-      staleTime: 30000,
-    }
+    gcTime: 0, // Disable garbage collection
+    staleTime: 0, // Always consider data stale
+    refetchInterval: 10000, // Refetch every 10 seconds
   });
 
   return (

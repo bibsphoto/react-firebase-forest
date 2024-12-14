@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { Website } from "@/lib/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -28,9 +28,33 @@ export const WebsiteList = () => {
     })
   );
 
+  // Set up real-time subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('website-list-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'websitesSupervision'
+        },
+        () => {
+          // Invalidate and refetch when data changes
+          queryClient.invalidateQueries({ queryKey: ['websites'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['websites', currentPage],
     queryFn: async () => {
+      console.log('Fetching websites...');
       const start = (currentPage - 1) * ITEMS_PER_PAGE;
       const end = start + ITEMS_PER_PAGE - 1;
 
@@ -45,12 +69,19 @@ export const WebsiteList = () => {
           *,
           websitePingHistory (
             response_time,
-            checked_at
+            checked_at,
+            status
           )
         `, { count: 'exact' })
+        .order('last_checked', { ascending: false })
         .range(start, end);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching websites:', error);
+        throw error;
+      }
+
+      console.log('Fetched websites:', websites);
 
       const sortedWebsites = websites?.sort((a, b) => {
         const posA = positions?.find(p => p.website_id === a.id)?.position || Number.MAX_SAFE_INTEGER;
@@ -60,14 +91,18 @@ export const WebsiteList = () => {
 
       const websitesWithResponseTime = sortedWebsites?.map(website => ({
         ...website,
-        responseTime: website.websitePingHistory?.[0]?.response_time
+        responseTime: website.websitePingHistory?.[0]?.response_time,
+        status: website.websitePingHistory?.[0]?.status || website.status
       }));
       
       return {
         websites: websitesWithResponseTime as Website[],
         totalCount: count || 0
       };
-    }
+    },
+    gcTime: 0, // Disable garbage collection
+    staleTime: 0, // Always consider data stale
+    refetchInterval: 10000, // Refetch every 10 seconds
   });
 
   const handleDragEnd = async (event: DragEndEvent) => {
