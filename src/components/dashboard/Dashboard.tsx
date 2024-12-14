@@ -10,10 +10,12 @@ import { toast } from "sonner";
 export const Dashboard = () => {
   const queryClient = useQueryClient();
 
-  // Set up real-time subscription
+  // Set up real-time subscription with improved error handling
   useEffect(() => {
+    console.log('Setting up real-time subscription for dashboard stats...');
+    
     const channel = supabase
-      .channel('website-updates')
+      .channel('dashboard-stats-updates')
       .on(
         'postgres_changes',
         {
@@ -21,19 +23,23 @@ export const Dashboard = () => {
           schema: 'public',
           table: 'websitesSupervision'
         },
-        () => {
+        (payload) => {
+          console.log('Received real-time update:', payload);
           // Invalidate and refetch when data changes
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up real-time subscription...');
       supabase.removeChannel(channel);
     };
   }, [queryClient]);
 
-  const { data: stats } = useQuery({
+  const { data: stats, isError } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       console.log('Fetching dashboard stats...');
@@ -71,6 +77,10 @@ export const Dashboard = () => {
     staleTime: 0,
     refetchInterval: 10000,
   });
+
+  if (isError) {
+    toast.error('Erreur lors du chargement des statistiques');
+  }
 
   const handleManualPing = async () => {
     try {
