@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,13 +39,13 @@ const Login = () => {
             <span className="text-3xl font-semibold text-primary">EYES</span>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Connectez-vous à votre compte
+            Créez votre compte
           </h2>
         </div>
         <div className="mt-8 bg-white p-8 rounded-lg shadow">
           <Auth
             supabaseClient={supabase}
-            view="sign_in"
+            view="sign_up"
             appearance={{
               theme: ThemeSupa,
               variables: {
@@ -70,20 +70,14 @@ const Login = () => {
             }}
             localization={{
               variables: {
-                sign_in: {
+                sign_up: {
                   email_label: "Adresse e-mail",
                   password_label: "Mot de passe",
-                  button_label: "Se connecter",
-                  loading_button_label: "Connexion en cours...",
+                  button_label: "S'inscrire",
+                  loading_button_label: "Inscription en cours...",
                   social_provider_text: "Continuer avec {{provider}}",
-                  link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                },
-                forgotten_password: {
-                  email_label: "Adresse e-mail",
-                  password_label: "Mot de passe",
-                  button_label: "Envoyer les instructions",
-                  loading_button_label: "Envoi des instructions...",
-                  link_text: "Mot de passe oublié ?",
+                  link_text: "Vous avez déjà un compte ? Connectez-vous",
+                  confirmation_text: "Confirmez votre mot de passe",
                 },
               },
             }}
@@ -97,4 +91,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

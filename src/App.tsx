@@ -11,6 +11,7 @@ import AddWebsite from "./pages/AddWebsite";
 import PingHistory from "./pages/PingHistory";
 import Statistics from "./pages/Statistics";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/"
             element={
