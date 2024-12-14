@@ -34,21 +34,27 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
 
   const handleDelete = async () => {
     try {
-      // Delete website positions first (due to foreign key constraint)
-      const { error: positionsError } = await supabase
-        .from('website_positions')
-        .delete()
-        .eq('website_id', id);
-
-      if (positionsError) throw positionsError;
-
-      // Delete ping history (due to foreign key constraint)
+      // First delete ping history
       const { error: historyError } = await supabase
         .from('websitePingHistory')
         .delete()
         .eq('website_id', id);
 
-      if (historyError) throw historyError;
+      if (historyError) {
+        console.error('Error deleting ping history:', historyError);
+        throw historyError;
+      }
+
+      // Then delete website positions
+      const { error: positionsError } = await supabase
+        .from('website_positions')
+        .delete()
+        .eq('website_id', id);
+
+      if (positionsError) {
+        console.error('Error deleting positions:', positionsError);
+        throw positionsError;
+      }
 
       // Finally delete the website
       const { error: websiteError } = await supabase
@@ -56,7 +62,10 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
         .delete()
         .eq('id', id);
 
-      if (websiteError) throw websiteError;
+      if (websiteError) {
+        console.error('Error deleting website:', websiteError);
+        throw websiteError;
+      }
 
       toast.success('Site supprimé avec succès');
     } catch (error) {
