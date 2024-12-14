@@ -4,66 +4,84 @@ import { CheckCircle, XCircle, Clock, ExternalLink, TrainFront } from "lucide-re
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface WebsiteCardProps {
+  id: string;
   url: string;
   status: "up" | "down";
   lastChecked: Date;
   responseTime?: number;
 }
 
-export const WebsiteCard = memo(({ url, status, lastChecked, responseTime }: WebsiteCardProps) => {
+export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }: WebsiteCardProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <Card className={`group transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${
-      status === "down" ? "site-down-alert" : ""
-    }`}>
-      <CardContent className="p-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-light rounded-lg group-hover:scale-110 transition-transform">
-                <TrainFront className="h-5 w-5 text-pink-500" />
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium truncate max-w-[150px]">{url}</span>
-                  <a 
-                    href={url.startsWith('http') ? url : `https://${url}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-gray-400 hover:text-primary transition-colors"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Card className={`group transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg cursor-move ${
+        status === "down" ? "site-down-alert" : ""
+      }`}>
+        <CardContent className="p-6">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary-light rounded-lg group-hover:scale-110 transition-transform">
+                  <TrainFront className="h-5 w-5 text-pink-500" />
                 </div>
-                <span className="text-sm text-gray-500">
-                  {formatDistanceToNow(lastChecked, { addSuffix: true, locale: fr })}
-                </span>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium truncate max-w-[150px]">{url}</span>
+                    <a 
+                      href={url.startsWith('http') ? url : `https://${url}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-primary transition-colors"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    {formatDistanceToNow(lastChecked, { addSuffix: true, locale: fr })}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <Badge 
+                variant={status === "up" ? "success" : "destructive"} 
+                className="capitalize transition-transform group-hover:scale-105"
+              >
+                {status === "up" ? (
+                  <CheckCircle className="mr-1 h-3 w-3" />
+                ) : (
+                  <XCircle className="mr-1 h-3 w-3" />
+                )}
+                {status === "up" ? "En ligne" : "Hors ligne"}
+              </Badge>
+              
+              <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-1 rounded-full">
+                <Clock className="h-4 w-4 text-gray-400" />
+                <span className="font-medium">{responseTime || '---'}ms</span>
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center justify-between">
-            <Badge 
-              variant={status === "up" ? "success" : "destructive"} 
-              className="capitalize transition-transform group-hover:scale-105"
-            >
-              {status === "up" ? (
-                <CheckCircle className="mr-1 h-3 w-3" />
-              ) : (
-                <XCircle className="mr-1 h-3 w-3" />
-              )}
-              {status === "up" ? "En ligne" : "Hors ligne"}
-            </Badge>
-            
-            <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-1 rounded-full">
-              <Clock className="h-4 w-4 text-gray-400" />
-              <span className="font-medium">{responseTime || '---'}ms</span>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 });
 
