@@ -39,7 +39,7 @@ const AddWebsite = () => {
     }
 
     try {
-      const { error } = await supabase.from('websites').insert([
+      const { error } = await supabase.from('websitesSupervision').insert([
         {
           url,
           description,
