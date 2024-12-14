@@ -9,17 +9,10 @@ interface WebsiteCardProps {
   url: string;
   status: "up" | "down";
   lastChecked: Date;
+  responseTime?: number;
 }
 
-export const WebsiteCard = memo(({ url, status, lastChecked }: WebsiteCardProps) => {
-  const getStatusColor = (status: "up" | "down") => {
-    return status === "up" ? "bg-green-500" : "bg-red-500";
-  };
-
-  const getResponseTime = () => {
-    return Math.floor(Math.random() * 500) + 100;
-  };
-
+export const WebsiteCard = memo(({ url, status, lastChecked, responseTime }: WebsiteCardProps) => {
   return (
     <Card className={`group transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${
       status === "down" ? "site-down-alert" : ""
@@ -65,7 +58,7 @@ export const WebsiteCard = memo(({ url, status, lastChecked }: WebsiteCardProps)
             
             <div className="flex items-center gap-2 text-sm bg-gray-50 px-3 py-1 rounded-full">
               <Clock className="h-4 w-4 text-gray-400" />
-              <span className="font-medium">{getResponseTime()}ms</span>
+              <span className="font-medium">{responseTime || '---'}ms</span>
             </div>
           </div>
         </div>

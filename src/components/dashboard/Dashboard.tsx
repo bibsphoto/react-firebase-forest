@@ -2,8 +2,47 @@ import { Button } from "@/components/ui/button";
 import { WebsiteList } from "./WebsiteList";
 import { Plus, History, BarChart, ArrowUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Dashboard = () => {
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const { data: websites, error } = await supabase
+        .from('websitesSupervision')
+        .select('status');
+      
+      if (error) throw error;
+
+      const totalSites = websites?.length || 0;
+      const onlineSites = websites?.filter(site => site.status === 'up').length || 0;
+      const availabilityPercentage = totalSites > 0 
+        ? Math.round((onlineSites / totalSites) * 100) 
+        : 0;
+
+      const { data: pingHistory } = await supabase
+        .from('websitePingHistory')
+        .select('response_time')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      const averageResponseTime = pingHistory?.length 
+        ? Math.round(pingHistory.reduce((acc, curr) => acc + (curr.response_time || 0), 0) / pingHistory.length)
+        : 0;
+
+      return {
+        totalSites,
+        availabilityPercentage,
+        averageResponseTime
+      };
+    },
+    gcTime: 5 * 60 * 1000,
+    meta: {
+      staleTime: 30000,
+    }
+  });
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -50,7 +89,9 @@ export const Dashboard = () => {
               <h3 className="text-lg font-semibold text-green-800">Sites en ligne</h3>
               <ArrowUp className="h-5 w-5 text-green-600" />
             </div>
-            <p className="text-3xl font-bold text-green-600 mt-2">100%</p>
+            <p className="text-3xl font-bold text-green-600 mt-2">
+              {stats?.availabilityPercentage || 0}%
+            </p>
           </div>
           
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl shadow-lg">
@@ -58,7 +99,9 @@ export const Dashboard = () => {
               <h3 className="text-lg font-semibold text-blue-800">Temps moyen</h3>
               <History className="h-5 w-5 text-blue-600" />
             </div>
-            <p className="text-3xl font-bold text-blue-600 mt-2">245ms</p>
+            <p className="text-3xl font-bold text-blue-600 mt-2">
+              {stats?.averageResponseTime || 0}ms
+            </p>
           </div>
           
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl shadow-lg">
@@ -66,7 +109,9 @@ export const Dashboard = () => {
               <h3 className="text-lg font-semibold text-purple-800">Sites surveillés</h3>
               <BarChart className="h-5 w-5 text-purple-600" />
             </div>
-            <p className="text-3xl font-bold text-purple-600 mt-2">15</p>
+            <p className="text-3xl font-bold text-purple-600 mt-2">
+              {stats?.totalSites || 0}
+            </p>
           </div>
         </div>
       </div>
