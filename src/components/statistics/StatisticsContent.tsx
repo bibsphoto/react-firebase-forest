@@ -3,6 +3,9 @@ import { supabase } from "@/lib/supabase";
 import { WebsiteStats } from "./WebsiteStats";
 import { AvailabilityChart } from "./AvailabilityChart";
 import { memo } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const MemoizedWebsiteStats = memo(WebsiteStats);
 const MemoizedAvailabilityChart = memo(AvailabilityChart);
@@ -51,7 +54,15 @@ export const StatisticsContent = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Statistiques de disponibilité</h1>
+      <div className="flex items-center gap-4 mb-8">
+        <Link to="/">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour
+          </Button>
+        </Link>
+        <h1 className="text-3xl font-bold">Statistiques de disponibilité</h1>
+      </div>
       
       {stats && stats.length > 0 ? (
         <>
