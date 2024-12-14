@@ -8,10 +8,26 @@ interface CheckResult {
 
 export async function checkWebsite(url: string): Promise<CheckResult> {
   const startTime = Date.now();
-  let normalizedUrl = url;
   
-  if (!url.startsWith('http')) {
-    normalizedUrl = `https://${url}`;
+  // Normalize URL
+  let normalizedUrl = url;
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    // Try HTTPS first
+    try {
+      const httpsResponse = await fetchWithTimeout(`https://${url}`);
+      if (httpsResponse.ok || httpsResponse.status === 304) {
+        normalizedUrl = `https://${url}`;
+      } else {
+        // If HTTPS fails, try HTTP
+        const httpResponse = await fetchWithTimeout(`http://${url}`);
+        if (httpResponse.ok || httpResponse.status === 304) {
+          normalizedUrl = `http://${url}`;
+        }
+      }
+    } catch {
+      // If HTTPS fails, default to HTTP
+      normalizedUrl = `http://${url}`;
+    }
   }
 
   try {
@@ -19,7 +35,8 @@ export async function checkWebsite(url: string): Promise<CheckResult> {
     const response = await fetchWithTimeout(normalizedUrl);
     const responseTime = Date.now() - startTime;
 
-    if (response.ok || response.status === 304) {
+    // Consider redirects (3xx) as successful too
+    if (response.ok || (response.status >= 300 && response.status < 400)) {
       console.log(`Website ${normalizedUrl} is UP (${response.status})`);
       return { status: 'up', responseTime };
     } else {

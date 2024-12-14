@@ -8,7 +8,8 @@ export async function fetchWithTimeout(url: string, timeout = 10000) {
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; UptimeBot/1.0; +https://example.com/bot)',
       },
-      redirect: 'follow',
+      redirect: 'follow', // Follow redirects automatically
+      method: 'GET',
     });
     clearTimeout(id);
     return response;
