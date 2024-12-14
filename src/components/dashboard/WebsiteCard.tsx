@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, XCircle, Clock, ExternalLink, Globe } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ExternalLink, TrainFront } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ export const WebsiteCard = memo(({ url, status, lastChecked }: WebsiteCardProps)
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary-light rounded-lg group-hover:scale-110 transition-transform">
-                <Globe className="h-5 w-5 text-primary" />
+                <TrainFront className="h-5 w-5 text-pink-500" />
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
