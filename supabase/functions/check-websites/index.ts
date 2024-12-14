@@ -22,15 +22,19 @@ serve(async (req) => {
       }
     );
 
+    // Récupérer les sites qui n'ont pas été vérifiés depuis plus de 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    
     const { data: websites, error: fetchError } = await supabaseClient
       .from('websitesSupervision')
-      .select('*');
+      .select('*')
+      .or(`last_checked.is.null,last_checked.lt.${fiveMinutesAgo}`);
 
     if (fetchError) {
       throw fetchError;
     }
 
-    console.log(`Found ${websites?.length} websites to check`);
+    console.log(`Found ${websites?.length} websites to check (not checked in the last 5 minutes)`);
 
     const checkPromises = websites?.map(async (website) => {
       try {
