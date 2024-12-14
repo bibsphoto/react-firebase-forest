@@ -28,80 +28,87 @@ Deno.serve(async (req) => {
       try {
         const startTime = Date.now()
         
-        // Essayer d'abord avec le protocole original
-        let url = website.url
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-          url = `https://${url}` // Par défaut, on essaie HTTPS
-        }
-
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 secondes timeout
-
-        try {
-          const response = await fetch(url, {
-            redirect: 'follow', // Suivre les redirections
-            signal: controller.signal
-          })
+        // Fonction pour vérifier une URL avec un protocole donné
+        const checkUrl = async (url: string) => {
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 10000)
           
-          clearTimeout(timeoutId)
-          const endTime = Date.now()
-          const responseTime = endTime - startTime
-
-          // Si la réponse est ok ou si c'est une redirection réussie
-          const isUp = response.ok || (response.status >= 300 && response.status < 400)
-
-          // Mettre à jour le statut du site
-          await supabaseClient
-            .from('websitesSupervision')
-            .update({
-              status: isUp ? 'up' : 'down',
-              last_checked: new Date().toISOString()
+          try {
+            const response = await fetch(url, {
+              redirect: 'follow',
+              signal: controller.signal,
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; WebsiteMonitor/1.0)'
+              }
             })
-            .eq('id', website.id)
-
-          // Enregistrer l'historique
-          await supabaseClient
-            .from('websitePingHistory')
-            .insert({
-              website_id: website.id,
-              status: isUp ? 'up' : 'down',
-              response_time: responseTime,
-              checked_at: new Date().toISOString()
-            })
-
-        } catch (fetchError) {
-          // Si HTTPS échoue, essayer HTTP
-          if (url.startsWith('https://')) {
-            const httpUrl = url.replace('https://', 'http://')
-            const response = await fetch(httpUrl, {
-              redirect: 'follow'
-            })
-            
-            const endTime = Date.now()
-            const responseTime = endTime - startTime
-
-            const isUp = response.ok || (response.status >= 300 && response.status < 400)
-
-            await supabaseClient
-              .from('websitesSupervision')
-              .update({
-                status: isUp ? 'up' : 'down',
-                last_checked: new Date().toISOString()
-              })
-              .eq('id', website.id)
-
-            await supabaseClient
-              .from('websitePingHistory')
-              .insert({
-                website_id: website.id,
-                status: isUp ? 'up' : 'down',
-                response_time: responseTime,
-                checked_at: new Date().toISOString()
-              })
-          } else {
-            throw fetchError
+            clearTimeout(timeoutId)
+            return response
+          } catch (error) {
+            clearTimeout(timeoutId)
+            throw error
           }
         }
+
+        // Préparer l'URL pour les tests
+        let baseUrl = website.url
+        if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+          baseUrl = `https://${baseUrl}`
+        }
+
+        // Essayer d'abord avec l'URL originale
+        let isUp = false
+        let responseTime = 0
+        let finalResponse = null
+
+        try {
+          const response = await checkUrl(baseUrl)
+          finalResponse = response
+          isUp = response.ok || (response.status >= 300 && response.status < 400)
+        } catch (error) {
+          // Si l'URL originale échoue et commence par https://, essayer avec http://
+          if (baseUrl.startsWith('https://')) {
+            try {
+              const httpUrl = baseUrl.replace('https://', 'http://')
+              const response = await checkUrl(httpUrl)
+              finalResponse = response
+              isUp = response.ok || (response.status >= 300 && response.status < 400)
+            } catch (httpError) {
+              console.error(`Both HTTPS and HTTP failed for ${website.url}:`, httpError)
+              isUp = false
+            }
+          }
+        }
+
+        // Calculer le temps de réponse
+        const endTime = Date.now()
+        responseTime = endTime - startTime
+
+        // Mettre à jour le statut du site
+        await supabaseClient
+          .from('websitesSupervision')
+          .update({
+            status: isUp ? 'up' : 'down',
+            last_checked: new Date().toISOString()
+          })
+          .eq('id', website.id)
+
+        // Enregistrer l'historique avec le code de statut
+        await supabaseClient
+          .from('websitePingHistory')
+          .insert({
+            website_id: website.id,
+            status: isUp ? 'up' : 'down',
+            response_time: responseTime,
+            checked_at: new Date().toISOString()
+          })
+
+        // Log pour le débogage
+        console.log(`Check completed for ${website.url}:`, {
+          isUp,
+          responseTime,
+          statusCode: finalResponse?.status,
+          redirected: finalResponse?.redirected
+        })
 
       } catch (error) {
         console.error(`Error checking website ${website.url}:`, error)
