@@ -6,13 +6,14 @@ export const Navbar = () => {
     <nav className="border-b bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between items-center">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center">
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3">
               <img
                 src="https://www.squirel.fr/images/squirel-logo-banner.png"
                 alt="Squirel by SNCF"
                 className="h-8 w-auto"
               />
+              <span className="text-xl font-semibold text-primary">EYES</span>
             </Link>
           </div>
           <div className="flex items-center gap-4">
