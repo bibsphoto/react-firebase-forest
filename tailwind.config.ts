@@ -36,6 +36,10 @@ export default {
           hover: "#7E69AB",
           light: "#F5F3FF",
         },
+        gradient: {
+          start: "#16937c",
+          end: "#34b5ca",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

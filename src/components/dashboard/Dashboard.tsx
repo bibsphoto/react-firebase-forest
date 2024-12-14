@@ -103,7 +103,6 @@ export const Dashboard = () => {
       }
       
       toast.success('Vérification manuelle des sites en cours...');
-      // Force immediate refetch after manual ping
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
         queryClient.invalidateQueries({ queryKey: ['websites'] });
@@ -165,7 +164,7 @@ export const Dashboard = () => {
         <Button
           variant="outline"
           onClick={handleManualPing}
-          className="flex items-center gap-2 bg-accent hover:bg-accent-hover text-white opacity-50 hover:opacity-100 transition-opacity border-none shadow-lg hover:shadow-xl"
+          className="flex items-center gap-2 bg-gradient-to-r from-gradient-start to-gradient-end text-white opacity-50 hover:opacity-100 transition-opacity border-none shadow-lg hover:shadow-xl"
         >
           <RefreshCw className="h-4 w-4" />
           Vérifier manuellement tous les sites
