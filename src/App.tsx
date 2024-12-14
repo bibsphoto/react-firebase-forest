@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import AddWebsite from "./pages/AddWebsite";
 import PingHistory from "./pages/PingHistory";
+import Statistics from "./pages/Statistics";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/add-website" element={<AddWebsite />} />
           <Route path="/history" element={<PingHistory />} />
+          <Route path="/statistics" element={<Statistics />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
