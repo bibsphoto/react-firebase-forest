@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { WebsiteCard } from "@/components/dashboard/WebsiteCard";
 
 const AddWebsite = () => {
   const [url, setUrl] = useState("");
@@ -79,39 +80,56 @@ const AddWebsite = () => {
         
         <h1 className="text-3xl font-bold mb-8">Ajouter un nouveau site</h1>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label htmlFor="url" className="block text-sm font-medium">
-              URL du site
-            </label>
-            <Input
-              id="url"
-              type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
-              required
-              disabled={isSubmitting}
-            />
+        <div className="grid md:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="url" className="block text-sm font-medium">
+                URL du site
+              </label>
+              <Input
+                id="url"
+                type="text"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://example.com"
+                required
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="description" className="block text-sm font-medium">
+                Description
+              </label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description du site (optionnel)"
+                disabled={isSubmitting}
+              />
+            </div>
+            
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Ajout en cours..." : "Ajouter le site"}
+            </Button>
+          </form>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-700">Prévisualisation</h2>
+            <div className="border rounded-lg p-4 bg-gray-50">
+              <WebsiteCard
+                url={url || "votre-site.com"}
+                status="up"
+                lastChecked={new Date()}
+                responseTime={200}
+              />
+            </div>
+            <p className="text-sm text-gray-500 italic">
+              Cette prévisualisation montre comment votre site apparaîtra dans le tableau de bord
+            </p>
           </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium">
-              Description
-            </label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description du site (optionnel)"
-              disabled={isSubmitting}
-            />
-          </div>
-          
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Ajout en cours..." : "Ajouter le site"}
-          </Button>
-        </form>
+        </div>
       </div>
     </div>
   );
