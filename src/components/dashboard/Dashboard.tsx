@@ -80,9 +80,9 @@ export const Dashboard = () => {
         averageResponseTime: Math.round(averageResponseTime)
       };
     },
-    gcTime: 0, // Disable garbage collection
-    staleTime: 0, // Always consider data stale
-    refetchInterval: 10000, // Refetch every 10 seconds
+    gcTime: 0,
+    staleTime: 0,
+    refetchInterval: 10000,
   });
 
   if (isError) {
@@ -165,7 +165,7 @@ export const Dashboard = () => {
         <Button
           variant="outline"
           onClick={handleManualPing}
-          className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity"
+          className="flex items-center gap-2 bg-accent hover:bg-accent-hover text-white opacity-50 hover:opacity-100 transition-opacity border-none shadow-lg hover:shadow-xl"
         >
           <RefreshCw className="h-4 w-4" />
           Vérifier manuellement tous les sites
