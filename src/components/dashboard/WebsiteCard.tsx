@@ -1,11 +1,14 @@
 import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle, XCircle, Clock, ExternalLink, TrainFront } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ExternalLink, TrainFront, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface WebsiteCardProps {
   id: string;
@@ -29,6 +32,21 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
     transition,
   };
 
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('websitesSupervision')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      toast.success('Site supprimé avec succès');
+    } catch (error) {
+      console.error('Error deleting website:', error);
+      toast.error('Erreur lors de la suppression du site');
+    }
+  };
+
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Card className={`group transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg cursor-move ${
@@ -41,17 +59,30 @@ export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime }:
                 <div className="p-2 bg-primary-light rounded-lg group-hover:scale-110 transition-transform">
                   <TrainFront className="h-5 w-5 text-pink-500" />
                 </div>
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium truncate max-w-[150px]">{url}</span>
-                    <a 
-                      href={url.startsWith('http') ? url : `https://${url}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-primary transition-colors"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
+                <div className="flex flex-col flex-grow">
+                  <div className="flex items-center justify-between gap-2 w-full">
+                    <span className="font-medium truncate max-w-[200px]">{url}</span>
+                    <div className="flex items-center gap-2">
+                      <a 
+                        href={url.startsWith('http') ? url : `https://${url}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-primary transition-colors"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-gray-400 hover:text-red-500 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete();
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                   <span className="text-sm text-gray-500">
                     {formatDistanceToNow(lastChecked, { addSuffix: true, locale: fr })}
