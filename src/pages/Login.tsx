@@ -44,7 +44,7 @@ const Login = () => {
             Connectez-vous à votre compte
           </h2>
         </div>
-        <div className="mt-8">
+        <div className="mt-8 bg-white p-8 rounded-lg shadow">
           <Auth
             supabaseClient={supabase}
             appearance={{
