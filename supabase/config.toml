@@ -1,1 +1,4 @@
 project_id = "ddbudopwefbhjrdqssma"
+
+[functions.clear-history]
+verify_jwt = false
