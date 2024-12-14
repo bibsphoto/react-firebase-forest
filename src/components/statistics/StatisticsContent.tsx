@@ -39,8 +39,10 @@ export const StatisticsContent = () => {
         };
       });
     },
-    staleTime: 60000, // Cache pendant 1 minute
-    cacheTime: 5 * 60 * 1000, // Garde en cache pendant 5 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    meta: {
+      staleTime: 60000, // 1 minute
+    }
   });
 
   if (isLoading) {

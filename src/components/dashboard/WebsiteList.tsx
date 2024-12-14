@@ -36,8 +36,10 @@ export const WebsiteList = () => {
         totalCount: count || 0
       };
     },
-    staleTime: 30000, // Cache pendant 30 secondes
-    cacheTime: 5 * 60 * 1000, // Garde en cache pendant 5 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    meta: {
+      staleTime: 30000, // 30 secondes
+    }
   });
 
   if (isLoading) {
