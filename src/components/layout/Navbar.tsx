@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="border-b bg-white">
+    <nav className="border-b bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between items-center">
           <div className="flex items-center gap-3">
@@ -25,6 +26,7 @@ export const Navbar = () => {
             </Link>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Button 
               variant="ghost" 
               onClick={handleLogout}
