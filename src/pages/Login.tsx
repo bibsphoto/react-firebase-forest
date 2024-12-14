@@ -8,7 +8,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is already logged in
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -18,7 +17,6 @@ const Login = () => {
     
     checkUser();
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         navigate("/");
@@ -55,6 +53,44 @@ const Login = () => {
                     brand: '#1EAEDB',
                     brandAccent: '#0EA5E9',
                   },
+                },
+              },
+              style: {
+                button: {
+                  fontFamily: 'system-ui, sans-serif',
+                },
+                anchor: {
+                  color: '#1EAEDB',
+                },
+                message: {
+                  color: '#EF4444',
+                },
+              },
+            }}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: "Adresse e-mail",
+                  password_label: "Mot de passe",
+                  button_label: "Se connecter",
+                  loading_button_label: "Connexion en cours...",
+                  social_provider_text: "Continuer avec {{provider}}",
+                  link_text: "Vous avez déjà un compte ? Connectez-vous",
+                },
+                sign_up: {
+                  email_label: "Adresse e-mail",
+                  password_label: "Mot de passe",
+                  button_label: "S'inscrire",
+                  loading_button_label: "Inscription en cours...",
+                  social_provider_text: "Continuer avec {{provider}}",
+                  link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                },
+                forgotten_password: {
+                  email_label: "Adresse e-mail",
+                  password_label: "Mot de passe",
+                  button_label: "Envoyer les instructions",
+                  loading_button_label: "Envoi des instructions...",
+                  link_text: "Mot de passe oublié ?",
                 },
               },
             }}
