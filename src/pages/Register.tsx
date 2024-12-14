@@ -79,7 +79,6 @@ const Register = () => {
                   loading_button_label: "Inscription en cours...",
                   social_provider_text: "Continuer avec {{provider}}",
                   link_text: "Vous avez déjà un compte ? Connectez-vous",
-                  confirmation_text: "Confirmez votre mot de passe",
                 },
               },
             }}
