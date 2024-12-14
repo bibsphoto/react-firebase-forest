@@ -10,7 +10,6 @@ export interface WebsitesSchema {
         url: string | null;
         user_id: string | null;
         icon_url: string | null;
-        responseTime: number | null;
       };
       Insert: {
         created_at?: string;
@@ -21,7 +20,6 @@ export interface WebsitesSchema {
         url?: string | null;
         user_id?: string | null;
         icon_url?: string | null;
-        responseTime?: number | null;
       };
       Update: {
         created_at?: string;
@@ -32,7 +30,6 @@ export interface WebsitesSchema {
         url?: string | null;
         user_id?: string | null;
         icon_url?: string | null;
-        responseTime?: number | null;
       };
       Relationships: [];
     };
