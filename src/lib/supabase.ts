@@ -12,4 +12,9 @@ export type Website = {
   status: 'up' | 'down';
   last_checked: Date;
   created_at: Date;
+  responseTime?: number;
+  websitePingHistory?: Array<{
+    response_time: number;
+    checked_at: string;
+  }>;
 };

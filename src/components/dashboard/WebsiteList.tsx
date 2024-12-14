@@ -55,9 +55,14 @@ export const WebsiteList = () => {
       // Récupérer les sites web et leur dernier ping
       const { data: websites, error, count } = await supabase
         .from('websitesSupervision')
-        .select('*, websitePingHistory!inner(*)', { count: 'exact' })
-        .order('websitePingHistory.checked_at', { ascending: false })
-        .limit(1, { foreignTable: 'websitePingHistory' })
+        .select(`
+          *,
+          websitePingHistory (
+            response_time,
+            checked_at
+          )
+        `, { count: 'exact' })
+        .order('created_at', { ascending: false })
         .range(start, end);
 
       if (error) throw error;
@@ -69,7 +74,7 @@ export const WebsiteList = () => {
         return posA - posB;
       });
 
-      // Transformer les données pour inclure le temps de réponse
+      // Transformer les données pour inclure le temps de réponse du dernier ping
       const websitesWithResponseTime = sortedWebsites?.map(website => ({
         ...website,
         responseTime: website.websitePingHistory?.[0]?.response_time
