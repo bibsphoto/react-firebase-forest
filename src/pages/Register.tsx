@@ -73,14 +73,13 @@ const Register = () => {
                 sign_up: {
                   email_label: "Adresse e-mail",
                   password_label: "Mot de passe",
+                  email_input_placeholder: "Votre adresse e-mail",
                   password_input_placeholder: "Votre mot de passe",
-                  password_input_label: "Mot de passe",
-                  confirm_password_label: "Confirmation du mot de passe",
-                  confirm_password_input_placeholder: "Confirmez votre mot de passe",
                   button_label: "S'inscrire",
                   loading_button_label: "Inscription en cours...",
                   social_provider_text: "Continuer avec {{provider}}",
                   link_text: "Vous avez déjà un compte ? Connectez-vous",
+                  confirmation_text: "Confirmez votre mot de passe",
                 },
               },
             }}
