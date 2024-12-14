@@ -16,7 +16,6 @@ interface WebsiteCardProps {
   lastChecked: Date;
   responseTime?: number;
   description?: string;
-  icon_url?: string;
 }
 
 export const WebsiteCard = memo(({ 
@@ -25,8 +24,7 @@ export const WebsiteCard = memo(({
   status, 
   lastChecked, 
   responseTime, 
-  description,
-  icon_url 
+  description
 }: WebsiteCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const {
@@ -60,7 +58,7 @@ export const WebsiteCard = memo(({
         <CardContent className="p-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between">
-              <WebsiteCardHeader url={url} id={id} icon_url={icon_url} />
+              <WebsiteCardHeader url={url} id={id} />
               <div className="website-card-actions">
                 <WebsiteCardActions url={url} id={id} />
               </div>
