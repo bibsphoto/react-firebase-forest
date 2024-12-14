@@ -2,6 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { WebsiteStats } from "./WebsiteStats";
 import { AvailabilityChart } from "./AvailabilityChart";
+import { memo } from "react";
+
+const MemoizedWebsiteStats = memo(WebsiteStats);
+const MemoizedAvailabilityChart = memo(AvailabilityChart);
 
 export const StatisticsContent = () => {
   const { data: stats, isLoading } = useQuery({
@@ -34,7 +38,9 @@ export const StatisticsContent = () => {
           history: website.websitePingHistory
         };
       });
-    }
+    },
+    staleTime: 60000, // Cache pendant 1 minute
+    cacheTime: 5 * 60 * 1000, // Garde en cache pendant 5 minutes
   });
 
   if (isLoading) {
@@ -49,12 +55,12 @@ export const StatisticsContent = () => {
         <>
           <div className="grid gap-6 mb-8">
             {stats.map((stat) => (
-              <WebsiteStats key={stat.id} {...stat} />
+              <MemoizedWebsiteStats key={stat.id} {...stat} />
             ))}
           </div>
           <div className="mt-12">
             <h2 className="text-2xl font-semibold mb-6">Graphique de disponibilité</h2>
-            <AvailabilityChart data={stats} />
+            <MemoizedAvailabilityChart data={stats} />
           </div>
         </>
       ) : (

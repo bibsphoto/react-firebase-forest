@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -9,7 +10,7 @@ interface WebsiteCardProps {
   lastChecked: Date;
 }
 
-export const WebsiteCard = ({ url, status, lastChecked }: WebsiteCardProps) => {
+export const WebsiteCard = memo(({ url, status, lastChecked }: WebsiteCardProps) => {
   return (
     <Card className="w-full">
       <CardContent className="flex items-center justify-between p-4">
@@ -27,4 +28,6 @@ export const WebsiteCard = ({ url, status, lastChecked }: WebsiteCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+WebsiteCard.displayName = "WebsiteCard";
