@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface WebsiteEditDialogProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const WebsiteEditDialog = ({ isOpen, onClose, website }: WebsiteEditDialo
   const [url, setUrl] = useState(website.url);
   const [description, setDescription] = useState(website.description || "");
   const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +36,7 @@ export const WebsiteEditDialog = ({ isOpen, onClose, website }: WebsiteEditDialo
       if (error) throw error;
 
       toast.success("Site web mis à jour avec succès");
+      queryClient.invalidateQueries({ queryKey: ['websites'] });
       onClose();
     } catch (error) {
       console.error("Error updating website:", error);
