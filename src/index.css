@@ -57,7 +57,7 @@
       transform: scale(1);
     }
     50% {
-      background-color: rgb(254 202 202 / 0.4);
+      background-color: rgb(254 202 202 / 0.7);
       transform: scale(1.02);
     }
   }
