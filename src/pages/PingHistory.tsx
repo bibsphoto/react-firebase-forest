@@ -76,6 +76,7 @@ const PingHistory = () => {
       if (selectedWebsite !== "all") {
         query = query.eq("website_id", selectedWebsite);
       } else {
+        // When "all" is selected, we need to delete with a condition that's always true
         query = query.gte("id", 0);
       }
 
@@ -123,19 +124,13 @@ const PingHistory = () => {
               value={selectedWebsite}
               onValueChange={(value) => setSelectedWebsite(value)}
             >
-              <SelectTrigger className="w-[280px] bg-gradient-to-r from-[#16937c] to-[#34b5ca] text-white border-none">
+              <SelectTrigger className="w-[280px]">
                 <SelectValue placeholder="Sélectionner un site" />
               </SelectTrigger>
-              <SelectContent className="bg-white border-none shadow-lg">
-                <SelectItem value="all" className="hover:bg-gradient-to-r hover:from-[#16937c] hover:to-[#34b5ca] hover:text-white">
-                  Tous les sites
-                </SelectItem>
+              <SelectContent>
+                <SelectItem value="all">Tous les sites</SelectItem>
                 {websites?.map((website) => (
-                  <SelectItem 
-                    key={website.id} 
-                    value={website.id.toString()}
-                    className="hover:bg-gradient-to-r hover:from-[#16937c] hover:to-[#34b5ca] hover:text-white"
-                  >
+                  <SelectItem key={website.id} value={website.id.toString()}>
                     {website.url}
                   </SelectItem>
                 ))}

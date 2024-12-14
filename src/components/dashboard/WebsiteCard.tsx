@@ -18,14 +18,7 @@ interface WebsiteCardProps {
   description?: string;
 }
 
-export const WebsiteCard = memo(({ 
-  id, 
-  url, 
-  status, 
-  lastChecked, 
-  responseTime, 
-  description
-}: WebsiteCardProps) => {
+export const WebsiteCard = memo(({ id, url, status, lastChecked, responseTime, description }: WebsiteCardProps) => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const {
     attributes,
@@ -41,6 +34,7 @@ export const WebsiteCard = memo(({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
+    // Prevent opening dialog when clicking on action buttons
     if ((e.target as HTMLElement).closest('.website-card-actions')) {
       return;
     }
@@ -58,7 +52,7 @@ export const WebsiteCard = memo(({
         <CardContent className="p-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between">
-              <WebsiteCardHeader url={url} id={id} />
+              <WebsiteCardHeader url={url} />
               <div className="website-card-actions">
                 <WebsiteCardActions url={url} id={id} />
               </div>

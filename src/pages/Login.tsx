@@ -81,6 +81,7 @@ const Login = () => {
                 sign_up: {
                   email_label: "Adresse e-mail",
                   password_label: "Mot de passe",
+                  confirmation_text: "Confirmez votre mot de passe",
                   button_label: "S'inscrire",
                   loading_button_label: "Inscription en cours...",
                   social_provider_text: "Continuer avec {{provider}}",
@@ -89,7 +90,7 @@ const Login = () => {
                 forgotten_password: {
                   email_label: "Adresse e-mail",
                   password_label: "Mot de passe",
-                  button_label: "Réinitialiser mon mot de passe",
+                  button_label: "Envoyer les instructions",
                   loading_button_label: "Envoi des instructions...",
                   link_text: "Mot de passe oublié ?",
                 },

@@ -34,17 +34,17 @@ export const StatisticsContent = () => {
         const downtime = totalPings - upPings;
 
         return {
-          id: website.id.toString(),
-          url: website.url || "",
+          id: website.id,
+          url: website.url,
           availability: Math.round(availability * 100) / 100,
           downtime,
           history: website.websitePingHistory
         };
       });
     },
-    gcTime: 5 * 60 * 1000,
+    gcTime: 5 * 60 * 1000, // 5 minutes
     meta: {
-      staleTime: 60000,
+      staleTime: 60000, // 1 minute
     }
   });
 
@@ -56,10 +56,7 @@ export const StatisticsContent = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <Link to="/">
-          <Button 
-            variant="outline"
-            className="bg-gradient-to-r from-[#16937c] to-[#34b5ca] text-white hover:opacity-90 border-none shadow-lg hover:shadow-xl transition-all duration-300"
-          >
+          <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>

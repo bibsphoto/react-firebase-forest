@@ -2,10 +2,9 @@ import { TrainFront } from "lucide-react";
 
 interface WebsiteCardHeaderProps {
   url: string;
-  id: string;
 }
 
-export const WebsiteCardHeader = ({ url, id }: WebsiteCardHeaderProps) => {
+export const WebsiteCardHeader = ({ url }: WebsiteCardHeaderProps) => {
   return (
     <div className="flex items-center gap-3">
       <div className="p-2 bg-primary-light rounded-lg group-hover:scale-110 transition-transform">
