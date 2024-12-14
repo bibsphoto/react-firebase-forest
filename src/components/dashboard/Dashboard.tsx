@@ -10,13 +10,19 @@ export const Dashboard = () => {
         <h1 className="text-3xl font-bold">Tableau de bord</h1>
         <div className="flex gap-4">
           <Link to="/statistics">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              className="bg-primary-stats text-white hover:bg-primary-statsHover border-none"
+            >
               <BarChart className="mr-2 h-4 w-4" />
               Statistiques
             </Button>
           </Link>
           <Link to="/history">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              className="bg-primary-stats text-white hover:bg-primary-statsHover border-none"
+            >
               <History className="mr-2 h-4 w-4" />
               Historique
             </Button>

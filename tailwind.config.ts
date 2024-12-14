@@ -28,6 +28,8 @@ export default {
           DEFAULT: "#1EAEDB",
           hover: "#0EA5E9",
           light: "#EEF2FF",
+          stats: "#16937d",
+          statsHover: "#23a29e",
         },
         accent: {
           DEFAULT: "#9b87f5",
