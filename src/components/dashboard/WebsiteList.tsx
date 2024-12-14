@@ -12,7 +12,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12; // Augmenté pour mieux remplir la grille
 
 export const WebsiteList = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,14 +36,20 @@ export const WebsiteList = () => {
         totalCount: count || 0
       };
     },
-    gcTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 5 * 60 * 1000,
     meta: {
-      staleTime: 30000, // 30 secondes
+      staleTime: 30000,
     }
   });
 
   if (isLoading) {
-    return <div className="text-center">Chargement...</div>;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-32 bg-gray-100 rounded-xl animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
   if (error) {
@@ -58,7 +64,7 @@ export const WebsiteList = () => {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.websites.map((website) => (
           <WebsiteCard
             key={website.id}
