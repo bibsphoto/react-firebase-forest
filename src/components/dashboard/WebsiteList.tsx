@@ -52,11 +52,12 @@ export const WebsiteList = () => {
         .select('website_id, position')
         .order('position', { ascending: true });
 
-      // Récupérer les sites web
+      // Récupérer les sites web et leur dernier ping
       const { data: websites, error, count } = await supabase
         .from('websitesSupervision')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
+        .select('*, websitePingHistory!inner(*)', { count: 'exact' })
+        .order('websitePingHistory.checked_at', { ascending: false })
+        .limit(1, { foreignTable: 'websitePingHistory' })
         .range(start, end);
 
       if (error) throw error;
@@ -67,9 +68,15 @@ export const WebsiteList = () => {
         const posB = positions?.find(p => p.website_id === b.id)?.position || Number.MAX_SAFE_INTEGER;
         return posA - posB;
       });
+
+      // Transformer les données pour inclure le temps de réponse
+      const websitesWithResponseTime = sortedWebsites?.map(website => ({
+        ...website,
+        responseTime: website.websitePingHistory?.[0]?.response_time
+      }));
       
       return {
-        websites: sortedWebsites as Website[],
+        websites: websitesWithResponseTime as Website[],
         totalCount: count || 0
       };
     },
@@ -162,6 +169,7 @@ export const WebsiteList = () => {
                 url={website.url}
                 status={website.status}
                 lastChecked={new Date(website.last_checked)}
+                responseTime={website.responseTime}
               />
             ))}
           </div>
