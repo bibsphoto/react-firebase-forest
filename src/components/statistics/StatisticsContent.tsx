@@ -34,7 +34,7 @@ export const StatisticsContent = () => {
         const downtime = totalPings - upPings;
 
         return {
-          id: website.id.toString(), // Convert id to string for chart compatibility
+          id: website.id.toString(),
           url: website.url || "",
           availability: Math.round(availability * 100) / 100,
           downtime,
@@ -56,7 +56,10 @@ export const StatisticsContent = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
         <Link to="/">
-          <Button variant="outline">
+          <Button 
+            variant="outline"
+            className="bg-gradient-to-r from-[#16937c] to-[#34b5ca] text-white hover:opacity-90 border-none shadow-lg hover:shadow-xl transition-all duration-300"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
